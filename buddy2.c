@@ -21,16 +21,15 @@ struct buddy2 {
 
 /*
  * 把size调整到向上取到最近的2次幂
- * size |= size >> n;表示从低位到高位按2n位分组,每组内高n位复制到低n位
- * 最后经过处理size是从最高位的1开始往低位全1的整数
- * return size + 1; 得到向上凑够最近2次幂
+ * 方法：利用2次幂的二进制中有且仅有一个比特位为1，将从高位到低位数出现的
+ * 第一个1依次复制到后面的所有位中，然后+1即得到仅大于size的2次幂
  */
-static unsigned fixsize(unsigned size) {	// 将size调整为2的幂大小，太高级，竟然没看懂:-(
-  size |= size >> 1;
-  size |= size >> 2;
-  size |= size >> 4;
-  size |= size >> 8;
-  size |= size >> 16;
+static unsigned fixsize(unsigned size) {
+  size |= size >> 1;	// 将第一个1复制到连续的后一位(2个1)
+  size |= size >> 2;	// 将前两个1复制到连续的后两位(4个1)
+  size |= size >> 4;	// 将前四个1复制到连续的后四位(8个1)
+  size |= size >> 8;	// 将前八个1复制到连续的后八位(16个1)
+  size |= size >> 16;	// 将前十六个1复制到连续的后十六位(32个1)
   return size+1;
 }
 
